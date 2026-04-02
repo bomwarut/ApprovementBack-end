@@ -25,6 +25,7 @@ namespace ApprovementBack_end.Controllers
 
         public class UpdateStatusDto
         {
+            public List<int> id { get; set; }
             public int status { get; set; }
             public string reason { get; set; }
         }
@@ -46,18 +47,23 @@ namespace ApprovementBack_end.Controllers
         }
 
 
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(int id , [FromBody] UpdateStatusDto dto) {
-            var item = await _context.ApprovelistTable.FindAsync(id);
-            if (item == null) return NotFound();
-            if (item.STATUS == 1) return BadRequest("อนุมัติแล้วไม่สามารถเปลี่ยนได้");
+        [HttpPut("status")]
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDto dto) {
+            var items = await _context.ApprovelistTable.
+                Where(x => dto.id.Contains(x.ID) && x.STATUS != 1).
+                ToListAsync();
+            if (items == null) return NotFound();
 
-            item.STATUS = dto.status;
-            item.REASON = dto.reason;
+            foreach (var item in items)
+            {
+                item.STATUS = dto.status;
+                item.REASON = dto.reason;
+                item.UPDATE_AT = DateTime.Now ;
+            }
 
             await _context.SaveChangesAsync();
 
-            return Ok(item);
+            return Ok();
         }
 
     }
