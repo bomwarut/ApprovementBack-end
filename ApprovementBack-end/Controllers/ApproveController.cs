@@ -1,7 +1,6 @@
 ﻿using ApprovementBack_end.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace ApprovementBack_end.Controllers
 {
@@ -23,8 +22,8 @@ namespace ApprovementBack_end.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetData(int page = 1,int pageSize = 10) {
-            var total = await _context.ApproveRequest.CountAsync();
-            var data = await _context.ApproveRequest.Skip((page - 1) * pageSize).Take((pageSize)).ToListAsync();
+            var total = await _context.ApprovelistTable.CountAsync();
+            var data = await _context.ApprovelistTable.Skip((page - 1) * pageSize).Take((pageSize)).ToListAsync();
 
             return Ok(new { total, data });
         }
@@ -32,7 +31,7 @@ namespace ApprovementBack_end.Controllers
 
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id , [FromBody] UpdateStatusDto dto) {
-            var item = await _context.ApproveRequest.FindAsync(id);
+            var item = await _context.ApprovelistTable.FindAsync(id);
             if (item == null) return NotFound();
             if (item.STATUS == 1) return BadRequest("อนุมัติแล้วไม่สามารถเปลี่ยนได้");
 
