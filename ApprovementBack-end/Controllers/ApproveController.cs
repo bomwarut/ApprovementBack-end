@@ -25,8 +25,8 @@ namespace ApprovementBack_end.Controllers
 
         public class UpdateStatusDto
         {
-            public int Status { get; set; }
-            public string Reason { get; set; }
+            public int status { get; set; }
+            public string reason { get; set; }
         }
 
         [HttpGet]
@@ -52,8 +52,8 @@ namespace ApprovementBack_end.Controllers
             if (item == null) return NotFound();
             if (item.STATUS == 1) return BadRequest("อนุมัติแล้วไม่สามารถเปลี่ยนได้");
 
-            item.STATUS = dto.Status;
-            item.REASON = dto.Reason;
+            item.STATUS = dto.status;
+            item.REASON = dto.reason;
 
             await _context.SaveChangesAsync();
 
