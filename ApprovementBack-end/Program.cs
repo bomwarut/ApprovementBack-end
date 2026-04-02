@@ -1,23 +1,24 @@
+using ApprovementBack_end.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// เชื่อม DB
+builder.Services.AddDbContext<ConnectDB>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+// CORS ให้ Angular เรียกได้
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAngular", policy =>
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
+app.UseCors("AllowAngular");
 app.MapControllers();
-
 app.Run();
